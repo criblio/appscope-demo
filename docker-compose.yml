@@ -1,0 +1,102 @@
+version: "3.5"
+services:
+  cribl:
+    build:
+      context: cribl
+    ports:
+      - 10200:10200
+      - 10088:10088
+      - 10080:10080
+      - 10001:10001
+      - 9999:9999
+      - 9000:9000
+      - 8125:8125
+      - 8125:8125/udp
+      - 5140:5140
+    volumes:
+      - ./cribl/cribl:/opt/cribl/local/cribl
+      - ./cribl/data:/opt/cribl/data
+    environment:
+      - SCOPE_METRIC_DEST=udp://${CRIBL_STATSD}
+      - SCOPE_EVENT_DEST=tcp://${CRIBL_TCPJSON}
+  gogen-accesscombined-forwarder:
+    build:
+      context: universalforwarder
+    environment:
+      - SPLUNK_CMD=cmd mkdir -p /var/log/httpd
+      - SPLUNK_CMD_1=cmd gogen -v -cd /etc/gogen -o file --filename
+        /var/log/httpd/access_log -lj gen -s shoppingapache 2>/var/log/gogen.log
+        &
+      - SPLUNK_CMD_2=add monitor /var/log/httpd/access_log -auth admin:cribldemo
+        -sourcetype access_combined -index cribl
+      - SPLUNK_CMD_3=add forward-server ${CRIBL_SPLUNK} -auth admin:cribldemo
+        ${CRIBL_SPLUNK_ARGS}
+  apiserver:
+    build:
+      context: apiserver
+    volumes:
+      - ./data:/opt/data
+    ports:
+      - 3000:3000
+    restart: always
+    ulimits:
+      nofile:
+        soft: 512
+        hard: 1024
+    healthcheck:
+      test: curl --fail -s http://localhost:3000/ || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    privileged: true
+    environment:
+      - DISABLE_ACCESS_COUNT=1
+      - DISABLE_ACCESS_COUNT=0
+      - SCOPE_METRIC_DEST=udp://${CRIBL_STATSD}
+      - SCOPE_EVENT_DEST=tcp://${CRIBL_TCPJSON}
+  redis:
+    build:
+      context: redis
+    ports:
+      - 6379:6379
+    environment:
+      - SCOPE_METRIC_DEST=udp://${CRIBL_STATSD}
+      - SCOPE_EVENT_DEST=tcp://${CRIBL_TCPJSON}
+  autoheal:
+    restart: always
+    image: willfarrell/autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  influxdb:
+    image: influxdb:1.7
+    environment:
+      - INFLUX_DB=cribl
+      - INFLUX_ADMIN_USER=admin
+      - INFLUX_ADMIN_PASSWORD=admin
+    ports:
+      - 8086:8086
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 8200:3000
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=cribldemo
+  cribl-influxdb:
+    image: telegraf:latest
+    volumes:
+      - ./telegraf/cribl-influx.conf:/etc/telegraf/telegraf.conf:ro
+  splunk:
+    build:
+      context: splunk
+    ports:
+      - 8000:8000
+      - 8088:8088
+      - 8089:8089
+      - 9997:9997
+    environment:
+      - DONT_TIMEOUT=1
+      - CRIBL_ROUTING_DEMO=1

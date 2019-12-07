@@ -1,0 +1,38 @@
+inputs:
+  http:
+    type: http
+    disabled: false
+    host: 0.0.0.0
+    port: 10080
+    criblAPI: /cribl
+    splunkHecAPI: ""
+    tls:
+      disabled: true
+    authToken: ""
+  tcpjson:
+    type: tcpjson
+    disabled: false
+    pipeline: tcpjson-conditioning
+    host: 0.0.0.0
+    port: 10001
+    tls:
+      disabled: true
+    ipWhitelistRegex: /.*/
+    authToken: ""
+  splunk:
+    type: splunk
+    disabled: false
+    host: 0.0.0.0
+    port: 9999
+    tls:
+      disabled: true
+    ipWhitelistRegex: /.*/
+    staleChannelFlushMs: 10000
+  metrics:
+    type: metrics
+    disabled: false
+    host: 0.0.0.0
+    udpPort: 8125
+    tcpPort: 8125
+    maxBufferSize: 1000
+    ipWhitelistRegex: /.*/

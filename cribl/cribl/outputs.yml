@@ -1,0 +1,54 @@
+outputs:
+  statsd:
+    type: router
+    rules:
+      - filter: "false"
+        output: localhost
+        final: false
+      - filter: "true"
+        output: influxdb
+        final: false
+      - filter: "true"
+        output: splunk-metrics
+        final: false
+    onBackpressure: drop
+  localhost:
+    type: statsd_ext
+    protocol: udp
+    host: localhost
+    port: 9125
+    mtu: 512
+    flushPeriodSec: 1
+    connectionTimeout: 5000
+    writeTimeout: 10000
+  influxdb:
+    type: statsd_ext
+    protocol: tcp
+    host: cribl-influxdb
+    port: 8125
+    mtu: 512
+    flushPeriodSec: 1
+    connectionTimeout: 5000
+    writeTimeout: 10000
+  default:
+    defaultId: splunk
+    type: default
+  splunk:
+    type: splunk
+    host: splunk
+    port: 9997
+    onBackpressure: block
+    nestedFields: none
+    tls:
+      disabled: true
+  splunk-metrics:
+    type: splunk
+    pipeline: metrics_to_logs
+    host: splunk
+    port: 9998
+    nestedFields: none
+    tls:
+      disabled: true
+    connectionTimeout: 5000
+    writeTimeout: 10000
+    onBackpressure: queue
