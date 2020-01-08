@@ -22,14 +22,17 @@ outputs:
     connectionTimeout: 5000
     writeTimeout: 10000
   influxdb:
-    type: statsd_ext
-    protocol: tcp
-    host: cribl-influxdb
-    port: 8125
-    mtu: 512
+    timestampPrecision: ms
+    dynamicValueFieldName: true
+    valueFieldName: value
+    concurrency: 5
+    maxPayloadSizeKB: 4096
     flushPeriodSec: 1
-    connectionTimeout: 5000
-    writeTimeout: 10000
+    auth:
+      disabled: true
+    type: influxdb
+    url: http://influxdb:8086/write
+    database: cribl
   default:
     defaultId: splunk
     type: default

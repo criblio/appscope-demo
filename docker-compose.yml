@@ -72,9 +72,9 @@ services:
   influxdb:
     image: influxdb:1.7
     environment:
-      - INFLUX_DB=cribl
-      - INFLUX_ADMIN_USER=admin
-      - INFLUX_ADMIN_PASSWORD=admin
+      - INFLUXDB_DB=cribl
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
     ports:
       - 8086:8086
   grafana:
@@ -85,10 +85,13 @@ services:
       - ./grafana:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=cribldemo
-  cribl-influxdb:
+  telegraf:
     image: telegraf:latest
     volumes:
-      - ./telegraf/cribl-influx.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CRIBL_STATSD
   splunk:
     build:
       context: splunk
