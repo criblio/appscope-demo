@@ -92,6 +92,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CRIBL_STATSD
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    ports:
+      - 9090:9090
   splunk:
     build:
       context: splunk

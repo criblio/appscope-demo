@@ -115,4 +115,14 @@ functions:
     conf:
       remove:
         - httpBasicUser
+  - id: flatten
+    filter: customer
+    disabled: null
+    conf:
+      fields:
+        - customer
+      prefix: ""
+      depth: 5
+      delimiter: _
 output: default
+groups: {}

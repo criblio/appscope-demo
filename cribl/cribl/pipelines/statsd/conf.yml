@@ -74,3 +74,12 @@ functions:
       bucketSeconds: 60
       redactValue: REDACTED
     description: Redact any field over 500 Values in 10 minutes
+  - id: prometheus
+    filter: "true"
+    disabled: null
+    conf:
+      batchWriteInterval: 5000
+      passthrough: true
+      update: true
+      fields:
+        - "*"

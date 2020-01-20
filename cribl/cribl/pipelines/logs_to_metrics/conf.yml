@@ -89,3 +89,12 @@ functions:
         - category_id
       cumulative: false
     description: Aggregate Web Access Logs
+  - id: prometheus
+    filter: sourcetype=='access_combined'
+    disabled: null
+    conf:
+      batchWriteInterval: 5000
+      passthrough: true
+      update: true
+      fields: 
+        - "*"
