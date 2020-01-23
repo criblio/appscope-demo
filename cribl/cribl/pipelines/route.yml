@@ -17,7 +17,7 @@ routes:
     description: Convert Access Combined Logs to Splunk Metrics
     clones:
       - index: cribl-metrics
-    filter: index=='cribl' && sourcetype=='access_combined'
+    filter: C.vars.accessCombined()
     output: statsd
   - id: ZLTc0g
     name: Enrich
@@ -30,7 +30,7 @@ routes:
         source: enrich
       - index: cribl-modified
         source: indextimefields
-    filter: index=='cribl' && sourcetype=='access_combined'
+    filter: C.vars.accessCombined()
     output: default
   - id: OsuFhD
     name: Main Route
