@@ -21,3 +21,4 @@ RUN chmod 755 /usr/lib/libscope.so
 ADD scope.yml /etc/scope/scope.yml
 RUN cp /var/opt/splunk/etc/splunk-launch.conf.default /var/opt/splunk/etc/splunk-launch.conf && \
     echo -e "\nLD_PRELOAD=/usr/lib/libscope.so\n" >> /var/opt/splunk/etc/splunk-launch.conf
+ENV SCOPE_TAG_service=splunk

@@ -50,10 +50,9 @@ services:
       retries: 3
     privileged: true
     environment:
-      - DISABLE_ACCESS_COUNT=1
-      - DISABLE_ACCESS_COUNT=0
-      - SCOPE_METRIC_DEST=udp://${CRIBL_STATSD}
-      - SCOPE_EVENT_DEST=tcp://${CRIBL_TCPJSON}
+      DISABLE_ACCESS_COUNT: 0
+      SCOPE_METRIC_DEST: udp://${CRIBL_STATSD}
+      SCOPE_EVENT_DEST: tcp://${CRIBL_TCPJSON}
   redis:
     build:
       context: redis
