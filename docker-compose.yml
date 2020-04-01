@@ -76,12 +76,15 @@ services:
       - INFLUXDB_ADMIN_PASSWORD=admin
     ports:
       - 8086:8086
+    volumes:
+      - influxdb:/var/lib/influxdb
   grafana:
     image: grafana/grafana
     ports:
       - 8200:3000
     volumes:
       - ./grafana:/etc/grafana/provisioning
+      - grafana:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=cribldemo
   telegraf:
@@ -108,3 +111,6 @@ services:
     environment:
       - DONT_TIMEOUT=1
       - CRIBL_ROUTING_DEMO=1
+volumes:
+  ? grafana
+  ? influxdb
