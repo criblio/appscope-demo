@@ -11,7 +11,7 @@ outputs:
       - filter: "true"
         output: splunk-metrics
         final: false
-    onBackpressure: drop
+    onBackpressure: block
   localhost:
     type: statsd_ext
     protocol: udp
@@ -33,6 +33,7 @@ outputs:
     type: influxdb
     url: http://influxdb:8086/write
     database: cribl
+    onBackpressure: block
   default:
     defaultId: splunk
     type: default
