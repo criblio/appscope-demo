@@ -16,6 +16,7 @@ services:
     volumes:
       - ./cribl/cribl:/opt/cribl/local/cribl
       - ./cribl/data:/opt/cribl/data
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - SCOPE_METRIC_DEST=udp://${CRIBL_STATSD}
       - SCOPE_EVENT_DEST=tcp://${CRIBL_TCPJSON}
@@ -37,14 +38,14 @@ services:
     volumes:
       - ./data:/opt/data
     ports:
-      - 3000:3000
+      - 4000:4000
     restart: always
     ulimits:
       nofile:
         soft: 512
         hard: 1024
     healthcheck:
-      test: curl --fail -s http://localhost:3000/ || exit 1
+      test: curl --fail -s http://localhost:4000/ || exit 1
       interval: 15s
       timeout: 10s
       retries: 3
@@ -81,7 +82,7 @@ services:
   grafana:
     image: grafana/grafana
     ports:
-      - 8200:3000
+      - 3000:3000
     volumes:
       - ./grafana:/etc/grafana/provisioning
       - grafana:/var/lib/grafana
