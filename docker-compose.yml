@@ -82,7 +82,7 @@ services:
   grafana:
     image: grafana/grafana
     ports:
-      - 3000:3000
+      - 8200:3000
     volumes:
       - ./grafana:/etc/grafana/provisioning
       - grafana:/var/lib/grafana

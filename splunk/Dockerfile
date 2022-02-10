@@ -16,8 +16,10 @@ ENV SPLUNK_USER root
 ENV SPLUNK_START_ARGS "--accept-license --answer-yes --seed-passwd cribldemo"
 ENV SPLUNK_BEFORE_START_CMD "version ${SPLUNK_START_ARGS}"
 ENV SPLUNK_BEFORE_START_CMD_1 "cmd /bin/bash /opt/splunk/etc/apps/cribl/bin/config.sh"
-ADD http://cdn.cribl.io/dl/scope/latest/linux/libscope.so /usr/lib/libscope.so
-RUN chmod 755 /usr/lib/libscope.so
+RUN VERSION=$(curl -s http://cdn.cribl.io/dl/scope/latest) && \
+    curl -Lso /tmp/scope "https://cdn.cribl.io/dl/scope/${VERSION}/linux/x86_64/scope" && \
+    chmod 755 /tmp/scope && \
+    /tmp/scope excrete /usr/lib/
 ADD scope.yml /etc/scope/scope.yml
 RUN cp /var/opt/splunk/etc/splunk-launch.conf.default /var/opt/splunk/etc/splunk-launch.conf && \
     echo -e "\nLD_PRELOAD=/usr/lib/libscope.so\n" >> /var/opt/splunk/etc/splunk-launch.conf
